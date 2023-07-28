@@ -83,6 +83,10 @@ export class UserService {
   }
 
   remove(id: string) {
+    const isUUID = validate(id);
+    if (!isUUID) {
+      throw new BadRequestException('Provided id is not valid');
+    }
     if (!this.users[id]) {
       throw new NotFoundException('User not found');
     }
