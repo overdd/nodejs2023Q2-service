@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
@@ -52,7 +51,7 @@ export class ArtistService {
     }
     const artist = this.artists[id];
     if (!artist) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Artist not found');
     }
 
     const { name, grammy } = updateArtistDto;
@@ -72,7 +71,7 @@ export class ArtistService {
       throw new BadRequestException('Provided id is not valid');
     }
     if (!this.artists[id]) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Artist not found');
     }
     delete this.artists[id];
   }

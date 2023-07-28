@@ -1,15 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  Res,
+  HttpStatus,
+  HttpCode,
+} from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { Response } from 'express';
 
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
   @Post()
-  create(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumService.create(createAlbumDto);
+  create(@Res() response: Response, @Body() createAlbumDto: CreateAlbumDto) {
+    const user = this.albumService.create(createAlbumDto);
+    return response.status(HttpStatus.CREATED).send(user);
   }
 
   @Get()
@@ -19,16 +32,18 @@ export class AlbumController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.albumService.findOne(+id);
+    const album = this.albumService.findOne(id);
+    return { statusCode: HttpStatus.OK, album };
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
-    return this.albumService.update(+id, updateAlbumDto);
+    return this.albumService.update(id, updateAlbumDto);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
-    return this.albumService.remove(+id);
+    return this.albumService.remove(id);
   }
 }
