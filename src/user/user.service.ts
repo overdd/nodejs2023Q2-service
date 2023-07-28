@@ -30,8 +30,9 @@ export class UserService {
       updatedAt: creationDate,
     };
     this.users[newUserId] = newUser;
-    delete newUser.password;
-    return newUser;
+    const userForReturn = structuredClone(newUser);
+    delete userForReturn.password;
+    return userForReturn;
   }
 
   findAll() {
@@ -51,6 +52,13 @@ export class UserService {
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
+    const isUUID = validate(id);
+    if (!isUUID) {
+      throw new BadRequestException('Provided id is not valid');
+    }
+    if (Object.keys(updateUserDto).length === 0) {
+      throw new BadRequestException('Invaid type of DTO');
+    }
     const user = this.users[id];
     if (!user) {
       throw new NotFoundException('User not found');
@@ -63,13 +71,15 @@ export class UserService {
         'Both oldPassword and newPassword are required fields',
       );
     }
-
     if (user.password !== oldPassword) {
       throw new ForbiddenException('Invalid old password');
     }
-
     user.password = newPassword;
-    return user;
+    user.version++;
+    user.updatedAt = Date.now();
+    const userForReturn = structuredClone(user);
+    delete userForReturn.password;
+    return userForReturn;
   }
 
   remove(id: string) {
