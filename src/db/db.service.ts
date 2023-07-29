@@ -32,4 +32,20 @@ export class DbService {
   deleteAlbum(id: string) {
     delete this.albums[id];
   }
+
+  addNewArtist(newArtist: Artist) {
+    this.artists[newArtist.id] = newArtist;
+  }
+
+  findAllArtists() {
+    return Object.values(this.artists);
+  }
+
+  findOneArtist(id: string) {
+    return this.artists[id];
+  }
+
+  deleteArtist(id: string) {
+    delete this.artists[id];
+  }
 }
