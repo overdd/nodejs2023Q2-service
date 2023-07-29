@@ -1,15 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+  Res,
+  HttpStatus,
+  HttpCode,
+} from '@nestjs/common';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import { Response } from 'express';
 
 @Controller('track')
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
   @Post()
-  create(@Body() createTrackDto: CreateTrackDto) {
-    return this.trackService.create(createTrackDto);
+  create(@Res() response: Response, @Body() createTrackDto: CreateTrackDto) {
+    const track = this.trackService.create(createTrackDto);
+    return response.status(HttpStatus.CREATED).send(track);
   }
 
   @Get()
@@ -19,16 +32,18 @@ export class TrackController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.trackService.findOne(+id);
+    const track = this.trackService.findOne(id);
+    return { statusCode: HttpStatus.OK, track };
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
-    return this.trackService.update(+id, updateTrackDto);
+    return this.trackService.update(id, updateTrackDto);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
-    return this.trackService.remove(+id);
+    return this.trackService.remove(id);
   }
 }
