@@ -6,11 +6,12 @@ import {
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
+import { DbService } from 'src/db/db.service';
 import { v4 as uuid, validate } from 'uuid';
 
 @Injectable()
 export class TrackService {
-  private tracks: { [id: string]: Track } = {};
+  constructor(private readonly db: DbService) {}
 
   create(createTrackDto: CreateTrackDto) {
     const { name, artistId, albumId, duration } = createTrackDto;
@@ -21,12 +22,12 @@ export class TrackService {
       albumId,
       duration,
     };
-    this.tracks[newTrack.id] = newTrack;
+    this.db.addNewTrack(newTrack);
     return newTrack;
   }
 
   findAll() {
-    return Object.values(this.tracks);
+    return this.db.findAllTracks();
   }
 
   findOne(id: string) {
@@ -34,7 +35,7 @@ export class TrackService {
     if (!isUUID) {
       throw new BadRequestException('Provided id is not valid');
     }
-    const track = this.tracks[id];
+    const track = this.db.findOneTrack[id];
     if (!track) {
       throw new NotFoundException('Artist not found');
     }
@@ -49,7 +50,7 @@ export class TrackService {
     if (Object.keys(updateTrackDto).length === 0) {
       throw new BadRequestException('Invaid type of DTO');
     }
-    const track = this.tracks[id];
+    const track = this.db.findOneTrack[id];
     if (!track) {
       throw new NotFoundException('Track not found');
     }
@@ -74,9 +75,9 @@ export class TrackService {
     if (!isUUID) {
       throw new BadRequestException('Provided id is not valid');
     }
-    if (!this.tracks[id]) {
+    if (!this.db.findOneTrack[id]) {
       throw new NotFoundException('Track not found');
     }
-    delete this.tracks[id];
+    this.db.deleteTrack[id];
   }
 }

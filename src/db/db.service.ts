@@ -16,7 +16,7 @@ export class DbService {
   };
   private tracks: { [id: string]: Track } = {};
   private users: { [id: string]: User } = {};
-
+  // Album
   addNewAlbum(newAlbum: Album) {
     this.albums[newAlbum.id] = newAlbum;
   }
@@ -32,7 +32,7 @@ export class DbService {
   deleteAlbum(id: string) {
     delete this.albums[id];
   }
-
+  // Artist
   addNewArtist(newArtist: Artist) {
     this.artists[newArtist.id] = newArtist;
   }
@@ -47,5 +47,21 @@ export class DbService {
 
   deleteArtist(id: string) {
     delete this.artists[id];
+  }
+  // Track
+  addNewTrack(newTrack: Track) {
+    this.tracks[newTrack.id] = newTrack;
+  }
+
+  findAllTracks() {
+    return Object.values(this.tracks);
+  }
+
+  findOneTrack(id: string) {
+    return this.tracks[id];
+  }
+
+  deleteTrack(id: string) {
+    delete this.tracks[id];
   }
 }
