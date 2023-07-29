@@ -6,6 +6,7 @@ import {
 import { ArtistService } from '../artist/artist.service';
 import { AlbumService } from '../album/album.service';
 import { TrackService } from '../track/track.service';
+import { Favorites } from './entities/favorite.entity';
 
 @Injectable()
 export class FavoritesService {
@@ -15,7 +16,7 @@ export class FavoritesService {
     private readonly trackService: TrackService,
   ) {}
 
-  private favorites = {
+  private favorites: Favorites = {
     artists: [],
     albums: [],
     tracks: [],

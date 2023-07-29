@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from 'src/interfaces/user.interface';
+import { User } from './entities/user.entity';
 import { v4 as uuid, validate } from 'uuid';
 
 @Injectable()

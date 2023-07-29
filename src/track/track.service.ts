@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { Track } from 'src/interfaces/track.interface';
+import { Track } from './entities/track.entity';
 import { v4 as uuid, validate } from 'uuid';
 
 @Injectable()
