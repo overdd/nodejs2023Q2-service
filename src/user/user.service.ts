@@ -7,11 +7,12 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { DbService } from 'src/db/db.service';
 import { v4 as uuid, validate } from 'uuid';
 
 @Injectable()
 export class UserService {
-  private users: { [id: string]: User } = {};
+  constructor(private readonly db: DbService) {}
 
   create(createUserDto: CreateUserDto) {
     const { login, password } = createUserDto;
@@ -29,14 +30,14 @@ export class UserService {
       createdAt: creationDate,
       updatedAt: creationDate,
     };
-    this.users[newUserId] = newUser;
+    this.db.addNewUser(newUser);
     const userForReturn = structuredClone(newUser);
     delete userForReturn.password;
     return userForReturn;
   }
 
   findAll() {
-    return Object.values(this.users);
+    return this.db.findAllUsers();
   }
 
   findOne(id: string) {
@@ -44,7 +45,7 @@ export class UserService {
     if (!isUUID) {
       throw new BadRequestException('Provided id is not valid');
     }
-    const user = this.users[id];
+    const user = this.db.findOneUser(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -59,7 +60,7 @@ export class UserService {
     if (Object.keys(updateUserDto).length === 0) {
       throw new BadRequestException('Invaid type of DTO');
     }
-    const user = this.users[id];
+    const user = this.db.findOneUser(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -87,9 +88,9 @@ export class UserService {
     if (!isUUID) {
       throw new BadRequestException('Provided id is not valid');
     }
-    if (!this.users[id]) {
+    if (!this.db.findOneUser(id)) {
       throw new NotFoundException('User not found');
     }
-    delete this.users[id];
+    this.db.deleteUser(id);
   }
 }

@@ -64,4 +64,22 @@ export class DbService {
   deleteTrack(id: string) {
     delete this.tracks[id];
   }
+
+  // User
+  addNewUser(newUser: User) {
+    this.users[newUser.id] = newUser;
+  }
+
+  findAllUsers() {
+    return Object.values(this.users);
+  }
+
+  findOneUser(id: string) {
+    return this.users[id];
+  }
+
+  deleteUser(id: string) {
+    delete this.users[id];
+  }
+
 }

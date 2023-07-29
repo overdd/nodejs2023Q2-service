@@ -21,6 +21,11 @@ export class AlbumService {
       year,
       artistId,
     };
+    if (!name || !year || !artistId) {
+      throw new BadRequestException(
+        'Name, year and artistId are required fields',
+      );
+    }
     this.db.addNewAlbum(newAlbum);
     return newAlbum;
   }
@@ -57,7 +62,9 @@ export class AlbumService {
     const { name, year, artistId } = updateAlbumDto;
 
     if (!name || !year || !artistId) {
-      throw new BadRequestException('Both name and grammy are required fields');
+      throw new BadRequestException(
+        'Name, year and artistId are required fields',
+      );
     }
 
     album.name = name;
