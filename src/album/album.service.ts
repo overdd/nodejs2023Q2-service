@@ -6,11 +6,12 @@ import {
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
+import { DbService } from 'src/db/db.service';
 import { v4 as uuid, validate } from 'uuid';
 
 @Injectable()
 export class AlbumService {
-  private albums: { [id: string]: Album } = {};
+  constructor(private readonly db: DbService) {}
 
   create(createAlbumDto: CreateAlbumDto) {
     const { name, year, artistId } = createAlbumDto;
@@ -20,12 +21,12 @@ export class AlbumService {
       year,
       artistId,
     };
-    this.albums[newAlbum.id] = newAlbum;
+    this.db.addNewAlbum(newAlbum);
     return newAlbum;
   }
 
   findAll() {
-    return Object.values(this.albums);
+    return this.db.findAllAlbums();
   }
 
   findOne(id: string) {
@@ -33,7 +34,7 @@ export class AlbumService {
     if (!isUUID) {
       throw new BadRequestException('Provided id is not valid');
     }
-    const album = this.albums[id];
+    const album = this.db.findOneAlbum(id);
     if (!album) {
       throw new NotFoundException('Artist not found');
     }
@@ -48,7 +49,7 @@ export class AlbumService {
     if (Object.keys(updateAlbumDto).length === 0) {
       throw new BadRequestException('Invaid type of DTO');
     }
-    const album = this.albums[id];
+    const album = this.db.findOneAlbum(id);
     if (!album) {
       throw new NotFoundException('Album not found');
     }
@@ -70,9 +71,9 @@ export class AlbumService {
     if (!isUUID) {
       throw new BadRequestException('Provided id is not valid');
     }
-    if (!this.albums[id]) {
+    if (!this.db.findOneAlbum(id)) {
       throw new NotFoundException('Album not found');
     }
-    delete this.albums[id];
+    this.db.deleteAlbum(id);
   }
 }
