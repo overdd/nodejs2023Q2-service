@@ -33,7 +33,7 @@ export class TrackController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     const track = this.trackService.findOne(id);
-    return { statusCode: HttpStatus.OK, track };
+    return track;
   }
 
   @Put(':id')

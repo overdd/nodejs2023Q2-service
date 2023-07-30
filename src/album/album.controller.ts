@@ -33,7 +33,7 @@ export class AlbumController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     const album = this.albumService.findOne(id);
-    return { statusCode: HttpStatus.OK, album };
+    return album;
   }
 
   @Put(':id')
