@@ -17,15 +17,16 @@ export class AlbumService {
 
   create(createAlbumDto: CreateAlbumDto) {
     const { name, year, artistId } = createAlbumDto;
+    if (!name || !year) {
+      throw new BadRequestException('Name, year are required fields');
+    }
     const newAlbum: Album = {
       id: uuid(),
       name,
       year,
       artistId,
     };
-    if (!name || !year) {
-      throw new BadRequestException('Name, year are required fields');
-    }
+
     this.db.addNewAlbum(newAlbum);
     return newAlbum;
   }

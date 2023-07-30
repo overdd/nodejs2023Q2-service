@@ -17,6 +17,9 @@ export class TrackService {
 
   create(createTrackDto: CreateTrackDto) {
     const { name, artistId, albumId, duration } = createTrackDto;
+    if (!name || !duration) {
+      throw new BadRequestException('Name and duration are required fields');
+    }
     const newTrack: Track = {
       id: uuid(),
       name,
@@ -37,9 +40,9 @@ export class TrackService {
     if (!isUUID) {
       throw new BadRequestException('Provided id is not valid');
     }
-    const track = this.db.findOneTrack[id];
+    const track = this.db.findOneTrack(id);
     if (!track) {
-      throw new NotFoundException('Artist not found');
+      throw new NotFoundException('Track not found');
     }
     return track;
   }
@@ -52,16 +55,16 @@ export class TrackService {
     if (Object.keys(updateTrackDto).length === 0) {
       throw new BadRequestException('Invaid type of DTO');
     }
-    const track = this.db.findOneTrack[id];
+    const track = this.db.findOneTrack(id);
     if (!track) {
       throw new NotFoundException('Track not found');
     }
 
     const { name, artistId, albumId, duration } = updateTrackDto;
 
-    if (!name || !artistId || !albumId || !duration) {
+    if (!name || !duration) {
       throw new BadRequestException(
-        'Name, artistId, albumId and duration  are required fields',
+        'Name, artistId, albumId and duration are required fields',
       );
     }
 
@@ -77,9 +80,9 @@ export class TrackService {
     if (!isUUID) {
       throw new BadRequestException('Provided id is not valid');
     }
-    if (!this.db.findOneTrack[id]) {
+    if (!this.db.findOneTrack(id)) {
       throw new NotFoundException('Track not found');
     }
-    this.db.deleteTrack[id];
+    this.db.deleteTrack(id);
   }
 }

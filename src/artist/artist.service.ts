@@ -9,7 +9,6 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { DbService } from 'src/db/db.service';
 import { v4 as uuid, validate } from 'uuid';
-import { type } from 'os';
 
 @Injectable()
 export class ArtistService {
@@ -18,15 +17,15 @@ export class ArtistService {
 
   create(createArtistDto: CreateArtistDto) {
     const { name, grammy } = createArtistDto;
-
+    if (!name || !grammy) {
+      throw new BadRequestException('Name, year are required fields');
+    }
     const newArtist: Artist = {
       id: uuid(),
       name,
       grammy,
     };
-    if (!name || !grammy) {
-      throw new BadRequestException('Name, year are required fields');
-    }
+
     this.db.addNewArtist(newArtist);
     return newArtist;
   }
