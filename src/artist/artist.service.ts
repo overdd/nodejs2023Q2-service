@@ -9,6 +9,7 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { DbService } from 'src/db/db.service';
 import { v4 as uuid, validate } from 'uuid';
+import { type } from 'os';
 
 @Injectable()
 export class ArtistService {
@@ -23,7 +24,9 @@ export class ArtistService {
       name,
       grammy,
     };
-
+    if (!name || !grammy) {
+      throw new BadRequestException('Name, year are required fields');
+    }
     this.db.addNewArtist(newArtist);
     return newArtist;
   }
@@ -59,7 +62,7 @@ export class ArtistService {
 
     const { name, grammy } = updateArtistDto;
 
-    if (!name || !grammy) {
+    if (!name || typeof grammy !== 'boolean') {
       throw new BadRequestException('Both name and grammy are required fields');
     }
 
@@ -76,6 +79,6 @@ export class ArtistService {
     if (!this.db.findOneArtist(id)) {
       throw new NotFoundException('Artist not found');
     }
-    this.db.deleteAlbum(id);
+    this.db.deleteArtist(id);
   }
 }

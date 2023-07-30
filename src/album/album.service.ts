@@ -23,10 +23,8 @@ export class AlbumService {
       year,
       artistId,
     };
-    if (!name || !year || !artistId) {
-      throw new BadRequestException(
-        'Name, year and artistId are required fields',
-      );
+    if (!name || !year) {
+      throw new BadRequestException('Name, year are required fields');
     }
     this.db.addNewAlbum(newAlbum);
     return newAlbum;
@@ -53,12 +51,14 @@ export class AlbumService {
     if (!isUUID) {
       throw new BadRequestException('Provided id is not valid');
     }
-    if (Object.keys(updateAlbumDto).length === 0) {
-      throw new BadRequestException('Invaid type of DTO');
-    }
     const album = this.db.findOneAlbum(id);
     if (!album) {
       throw new NotFoundException('Album not found');
+    }
+    if (
+      Object.values(updateAlbumDto).some((value) => typeof value === 'boolean')
+    ) {
+      throw new BadRequestException('Invaid type of DTO');
     }
 
     const { name, year, artistId } = updateAlbumDto;
