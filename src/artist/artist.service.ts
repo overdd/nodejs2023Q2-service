@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
@@ -11,7 +12,8 @@ import { v4 as uuid, validate } from 'uuid';
 
 @Injectable()
 export class ArtistService {
-  constructor(private readonly db: DbService) {}
+  @Inject(DbService)
+  private readonly db: DbService;
 
   create(createArtistDto: CreateArtistDto) {
     const { name, grammy } = createArtistDto;

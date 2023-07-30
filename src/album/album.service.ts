@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,7 +12,8 @@ import { v4 as uuid, validate } from 'uuid';
 
 @Injectable()
 export class AlbumService {
-  constructor(private readonly db: DbService) {}
+  @Inject(DbService)
+  private readonly db: DbService;
 
   create(createAlbumDto: CreateAlbumDto) {
     const { name, year, artistId } = createAlbumDto;

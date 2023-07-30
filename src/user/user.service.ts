@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  Inject,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -12,7 +13,8 @@ import { v4 as uuid, validate } from 'uuid';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly db: DbService) {}
+  @Inject(DbService)
+  private readonly db: DbService;
 
   create(createUserDto: CreateUserDto) {
     const { login, password } = createUserDto;
