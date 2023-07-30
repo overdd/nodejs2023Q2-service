@@ -1,10 +1,12 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { DbService } from 'src/db/db.service';
+import { validate } from 'uuid';
 
 @Injectable()
 export class FavoritesService {
@@ -16,6 +18,10 @@ export class FavoritesService {
   }
 
   addTrack(trackId: string): { message: string } {
+    const isUUID = validate(trackId);
+    if (!isUUID) {
+      throw new BadRequestException('Provided id is not valid');
+    }
     const trackExists = this.db.findOneTrack(trackId);
     if (trackExists) {
       this.db.addTrackToFavorites(trackId);
@@ -26,9 +32,9 @@ export class FavoritesService {
   }
 
   deleteTrack(trackId: string): { message: string } {
-    const index = this.db.getIndexOfId('tracks', trackId);
+    const index = this.db.getIndexInFavs('tracks', trackId);
     if (index !== -1) {
-      this.db.setValueToNull('tracks', index);
+      this.db.deleteTrackFromFavorites(index);
       return { message: 'Track deleted from favorites' };
     } else {
       throw new NotFoundException('Track not found in favorites');
@@ -36,6 +42,10 @@ export class FavoritesService {
   }
 
   addAlbum(albumId: string): { message: string } {
+    const isUUID = validate(albumId);
+    if (!isUUID) {
+      throw new BadRequestException('Provided id is not valid');
+    }
     const albumExists = this.db.findOneAlbum(albumId);
     if (albumExists) {
       this.db.addAlbumToFavorites(albumId);
@@ -46,9 +56,9 @@ export class FavoritesService {
   }
 
   deleteAlbum(albumId: string): { message: string } {
-    const index = this.db.getIndexOfId('albums', albumId);
+    const index = this.db.getIndexInFavs('albums', albumId);
     if (index !== -1) {
-      this.db.setValueToNull('albums', index);
+      this.db.deleteAlbumFromFavorites(index);
       return { message: 'Album deleted from favorites' };
     } else {
       throw new NotFoundException('Album not found in favorites');
@@ -56,6 +66,10 @@ export class FavoritesService {
   }
 
   addArtist(artistId: string): { message: string } {
+    const isUUID = validate(artistId);
+    if (!isUUID) {
+      throw new BadRequestException('Provided id is not valid');
+    }
     const artistExists = this.db.findOneArtist(artistId);
     if (artistExists) {
       this.db.addArtistToFavorites(artistId);
@@ -66,9 +80,9 @@ export class FavoritesService {
   }
 
   deleteArtist(artistId: string): { message: string } {
-    const index = this.db.getIndexOfId('artists', artistId);
+    const index = this.db.getIndexInFavs('artists', artistId);
     if (index !== -1) {
-      this.db.setValueToNull('artists', index);
+      this.db.deleteArtistFromFavorites(index);
       return { message: 'Artist deleted from favorites' };
     } else {
       throw new NotFoundException('Artist not found in favorites');

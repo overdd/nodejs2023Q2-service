@@ -30,6 +30,8 @@ export class DbService {
   }
 
   deleteAlbum(id: string) {
+    const index = this.getIndexInFavs('albums', id);
+    this.deleteAlbumFromFavorites(index);
     delete this.albums[id];
   }
   // Artist
@@ -46,6 +48,8 @@ export class DbService {
   }
 
   deleteArtist(id: string) {
+    const index = this.getIndexInFavs('artists', id);
+    this.deleteArtistFromFavorites(index);
     delete this.artists[id];
   }
   // Track
@@ -62,6 +66,8 @@ export class DbService {
   }
 
   deleteTrack(id: string) {
+    const index = this.getIndexInFavs('tracks', id);
+    this.deleteTrackFromFavorites(index);
     delete this.tracks[id];
   }
 
@@ -94,16 +100,28 @@ export class DbService {
     this.favorites.tracks.push(id);
   }
 
+  deleteTrackFromFavorites(index: number) {
+    this.favorites.tracks.splice(index, 1);
+  }
+
   addAlbumToFavorites(id: string) {
     this.favorites.albums.push(id);
+  }
+
+  deleteAlbumFromFavorites(index: number) {
+    this.favorites.albums.splice(index, 1);
   }
 
   addArtistToFavorites(id: string) {
     this.favorites.artists.push(id);
   }
 
+  deleteArtistFromFavorites(index: number) {
+    this.favorites.artists.splice(index, 1);
+  }
+
   // General
-  getIndexOfId(table: string, id: string) {
+  getIndexInFavs(table: string, id: string) {
     return this.favorites[table].indexOf(id);
   }
 

@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 // import { CreateFavoriteDto } from './dto/create-favorite.dto';
 // import { UpdateFavoriteDto } from './dto/update-favorite.dto';
@@ -19,6 +27,7 @@ export class FavoritesController {
   }
 
   @Delete('track/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   deleteTrackFromFavorites(@Param('id') trackId: string): { message: string } {
     return this.favoritesService.deleteTrack(trackId);
   }
@@ -29,6 +38,7 @@ export class FavoritesController {
   }
 
   @Delete('album/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   deleteAlbumFromFavorites(@Param('id') albumId: string): { message: string } {
     return this.favoritesService.deleteAlbum(albumId);
   }
@@ -39,6 +49,7 @@ export class FavoritesController {
   }
 
   @Delete('artist/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   deleteArtistFromFavorites(@Param('id') artistId: string): {
     message: string;
   } {
