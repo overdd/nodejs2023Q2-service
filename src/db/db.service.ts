@@ -32,6 +32,12 @@ export class DbService {
   deleteAlbum(id: string) {
     const index = this.getIndexInFavs('albums', id);
     this.deleteAlbumFromFavorites(index);
+    const toBeNulledInTracks = Object.values(this.tracks).filter(
+      (object) => object['albumId'] === id,
+    );
+    toBeNulledInTracks.forEach((track) => {
+      track.albumId = null;
+    });
     delete this.albums[id];
   }
   // Artist
@@ -50,6 +56,18 @@ export class DbService {
   deleteArtist(id: string) {
     const index = this.getIndexInFavs('artists', id);
     this.deleteArtistFromFavorites(index);
+    const toBeNulledInAlbums = Object.values(this.albums).filter(
+      (object) => object['artistId'] === id,
+    );
+    toBeNulledInAlbums.forEach((album) => {
+      album.artistId = null;
+    });
+    const toBeNulledInTracks = Object.values(this.tracks).filter(
+      (object) => object['artistId'] === id,
+    );
+    toBeNulledInTracks.forEach((track) => {
+      track.artistId = null;
+    });
     delete this.artists[id];
   }
   // Track
