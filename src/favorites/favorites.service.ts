@@ -1,45 +1,24 @@
 import {
+  Inject,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { ArtistService } from '../artist/artist.service';
-import { AlbumService } from '../album/album.service';
-import { TrackService } from '../track/track.service';
-import { Favorites } from './entities/favorite.entity';
+import { DbService } from 'src/db/db.service';
 
 @Injectable()
 export class FavoritesService {
-  constructor(
-    private readonly artistService: ArtistService,
-    private readonly albumService: AlbumService,
-    private readonly trackService: TrackService,
-  ) {}
-
-  private favorites: Favorites = {
-    artists: [],
-    albums: [],
-    tracks: [],
-  };
+  @Inject(DbService)
+  private readonly db: DbService;
 
   findAll() {
-    const findAllFavorites = this.favorites;
-    const albums = findAllFavorites.albums.map((id) =>
-      this.albumService.findOne(id),
-    );
-    const artists = findAllFavorites.artists.map((id) =>
-      this.artistService.findOne(id),
-    );
-    const tracks = findAllFavorites.tracks.map((id) =>
-      this.trackService.findOne(id),
-    );
-    return { albums, artists, tracks };
+    return this.db.findAllFavorites();
   }
 
   addTrack(trackId: string): { message: string } {
-    const trackExists = this.trackService.findOne(trackId);
+    const trackExists = this.db.findOneTrack(trackId);
     if (trackExists) {
-      this.favorites.tracks.push(trackId);
+      this.db.addTrackToFavorites(trackId);
       return { message: 'Track added to favorites' };
     } else {
       throw new UnprocessableEntityException('Track does not exist');
@@ -47,9 +26,9 @@ export class FavoritesService {
   }
 
   deleteTrack(trackId: string): { message: string } {
-    const index = this.favorites.tracks.indexOf(trackId);
+    const index = this.db.getIndexOfId('tracks', trackId);
     if (index !== -1) {
-      this.favorites.tracks[index] = null;
+      this.db.setValueToNull('tracks', index);
       return { message: 'Track deleted from favorites' };
     } else {
       throw new NotFoundException('Track not found in favorites');
@@ -57,9 +36,9 @@ export class FavoritesService {
   }
 
   addAlbum(albumId: string): { message: string } {
-    const albumExists = this.albumService.findOne(albumId);
+    const albumExists = this.db.findOneAlbum(albumId);
     if (albumExists) {
-      this.favorites.albums.push(albumId);
+      this.db.addAlbumToFavorites(albumId);
       return { message: 'Album added to favorites' };
     } else {
       throw new UnprocessableEntityException('Album does not exist');
@@ -67,9 +46,9 @@ export class FavoritesService {
   }
 
   deleteAlbum(albumId: string): { message: string } {
-    const index = this.favorites.albums.indexOf(albumId);
+    const index = this.db.getIndexOfId('albums', albumId);
     if (index !== -1) {
-      this.favorites.albums[index] = null;
+      this.db.setValueToNull('albums', index);
       return { message: 'Album deleted from favorites' };
     } else {
       throw new NotFoundException('Album not found in favorites');
@@ -77,9 +56,9 @@ export class FavoritesService {
   }
 
   addArtist(artistId: string): { message: string } {
-    const artistExists = this.artistService.findOne(artistId);
+    const artistExists = this.db.findOneArtist(artistId);
     if (artistExists) {
-      this.favorites.artists.push(artistId);
+      this.db.addArtistToFavorites(artistId);
       return { message: 'Artist added to favorites' };
     } else {
       throw new UnprocessableEntityException('Artist does not exist');
@@ -87,9 +66,9 @@ export class FavoritesService {
   }
 
   deleteArtist(artistId: string): { message: string } {
-    const index = this.favorites.artists.indexOf(artistId);
+    const index = this.db.getIndexOfId('artists', artistId);
     if (index !== -1) {
-      this.favorites.artists[index] = null;
+      this.db.setValueToNull('artists', index);
       return { message: 'Artist deleted from favorites' };
     } else {
       throw new NotFoundException('Artist not found in favorites');

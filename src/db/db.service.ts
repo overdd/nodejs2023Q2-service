@@ -82,4 +82,32 @@ export class DbService {
     delete this.users[id];
   }
 
+  // Favorites
+  findAllFavorites() {
+    const albums = this.favorites.albums.map((id) => this.findOneAlbum(id));
+    const artists = this.favorites.artists.map((id) => this.findOneArtist(id));
+    const tracks = this.favorites.tracks.map((id) => this.findOneTrack(id));
+    return { albums, artists, tracks };
+  }
+
+  addTrackToFavorites(id: string) {
+    this.favorites.tracks.push(id);
+  }
+
+  addAlbumToFavorites(id: string) {
+    this.favorites.albums.push(id);
+  }
+
+  addArtistToFavorites(id: string) {
+    this.favorites.artists.push(id);
+  }
+
+  // General
+  getIndexOfId(table: string, id: string) {
+    return this.favorites[table].indexOf(id);
+  }
+
+  setValueToNull(table: string, index: number) {
+    this.favorites[table][index] = null;
+  }
 }
