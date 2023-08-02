@@ -8,7 +8,7 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { DbService } from 'src/db/db.service';
-import { v4 as uuid, validate } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class ArtistService {
@@ -35,10 +35,6 @@ export class ArtistService {
   }
 
   findOne(id: string) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     const artist = this.db.findOneArtist(id);
     if (!artist) {
       throw new NotFoundException('Artist not found');
@@ -47,10 +43,7 @@ export class ArtistService {
   }
 
   update(id: string, updateArtistDto: UpdateArtistDto) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
+
     if (Object.keys(updateArtistDto).length === 0) {
       throw new BadRequestException('Invaid type of DTO');
     }
@@ -71,10 +64,6 @@ export class ArtistService {
   }
 
   remove(id: string) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     if (!this.db.findOneArtist(id)) {
       throw new NotFoundException('Artist not found');
     }

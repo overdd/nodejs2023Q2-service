@@ -18,10 +18,6 @@ export class FavoritesService {
   }
 
   addTrack(trackId: string): { message: string } {
-    const isUUID = validate(trackId);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     const trackExists = this.db.findOneTrack(trackId);
     if (trackExists) {
       this.db.addTrackToFavorites(trackId);
@@ -42,10 +38,6 @@ export class FavoritesService {
   }
 
   addAlbum(albumId: string): { message: string } {
-    const isUUID = validate(albumId);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     const albumExists = this.db.findOneAlbum(albumId);
     if (albumExists) {
       this.db.addAlbumToFavorites(albumId);
@@ -66,10 +58,6 @@ export class FavoritesService {
   }
 
   addArtist(artistId: string): { message: string } {
-    const isUUID = validate(artistId);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     const artistExists = this.db.findOneArtist(artistId);
     if (artistExists) {
       this.db.addArtistToFavorites(artistId);

@@ -8,7 +8,7 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
 import { DbService } from 'src/db/db.service';
-import { v4 as uuid, validate } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class TrackService {
@@ -36,10 +36,6 @@ export class TrackService {
   }
 
   findOne(id: string) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     const track = this.db.findOneTrack(id);
     if (!track) {
       throw new NotFoundException('Track not found');
@@ -48,10 +44,6 @@ export class TrackService {
   }
 
   update(id: string, updateTrackDto: UpdateTrackDto) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     if (Object.keys(updateTrackDto).length === 0) {
       throw new BadRequestException('Invaid type of DTO');
     }
@@ -76,10 +68,6 @@ export class TrackService {
   }
 
   remove(id: string) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     if (!this.db.findOneTrack(id)) {
       throw new NotFoundException('Track not found');
     }

@@ -9,7 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { DbService } from 'src/db/db.service';
-import { v4 as uuid, validate } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class UserService {
@@ -43,10 +43,6 @@ export class UserService {
   }
 
   findOne(id: string) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     const user = this.db.findOneUser(id);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -55,10 +51,6 @@ export class UserService {
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     if (Object.keys(updateUserDto).length === 0) {
       throw new BadRequestException('Invaid type of DTO');
     }
@@ -86,10 +78,6 @@ export class UserService {
   }
 
   remove(id: string) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     if (!this.db.findOneUser(id)) {
       throw new NotFoundException('User not found');
     }

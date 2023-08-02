@@ -8,7 +8,7 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
 import { DbService } from 'src/db/db.service';
-import { v4 as uuid, validate } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class AlbumService {
@@ -36,10 +36,6 @@ export class AlbumService {
   }
 
   findOne(id: string) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     const album = this.db.findOneAlbum(id);
     if (!album) {
       throw new NotFoundException('Artist not found');
@@ -48,10 +44,6 @@ export class AlbumService {
   }
 
   update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     const album = this.db.findOneAlbum(id);
     if (!album) {
       throw new NotFoundException('Album not found');
@@ -77,10 +69,7 @@ export class AlbumService {
   }
 
   remove(id: string) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
+
     if (!this.db.findOneAlbum(id)) {
       throw new NotFoundException('Album not found');
     }
