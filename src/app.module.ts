@@ -17,7 +17,9 @@ import { ConfigModule } from '@nestjs/config';
     AlbumModule,
     FavoritesModule,
     DbModule,
-    ConfigModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
