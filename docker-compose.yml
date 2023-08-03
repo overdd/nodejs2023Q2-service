@@ -1,0 +1,41 @@
+version: '3'
+services:
+  nestjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '${PORT}:${PORT}'
+    volumes:
+      - .:/usr/src/app
+    environment:
+      NODE_ENV: production
+    networks:
+      - my-network
+    restart: always
+
+  postgres-db:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    environment:
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+    networks:
+      - my-network
+    restart: always
+    
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - '${ADMINER_PORT}:${ADMINER_PORT}'
+    environment:
+    - ADMINER_DEFAULT_SERVER=postgres-db
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
