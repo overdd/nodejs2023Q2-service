@@ -6,6 +6,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - '${PORT}:${PORT}'
+    depends_on:
+      - postgres-db
     volumes:
       - .:/usr/src/app
     environment:
