@@ -42,7 +42,10 @@ export class UserController {
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
-  update(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     const updatedUser = this.userService.update(id, updateUserDto);
     return updatedUser;
   }

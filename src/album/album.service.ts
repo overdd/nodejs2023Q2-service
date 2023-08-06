@@ -69,7 +69,6 @@ export class AlbumService {
   }
 
   remove(id: string) {
-
     if (!this.db.findOneAlbum(id)) {
       throw new NotFoundException('Album not found');
     }

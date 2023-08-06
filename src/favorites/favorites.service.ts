@@ -1,12 +1,10 @@
 import {
-  BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { DbService } from 'src/db/db.service';
-import { validate } from 'uuid';
 
 @Injectable()
 export class FavoritesService {

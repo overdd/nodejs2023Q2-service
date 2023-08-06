@@ -22,7 +22,8 @@
     "docker:build": "npm run docker:build:app && npm run docker:build:db",
     "docker:build:app": "cross-env PORT=$PORT docker build --build-arg PORT=$PORT -t nestjs-app -f Dockerfile .",
     "docker:build:db": "docker build -t postgres-db -f Dockerfile.db .",
-    "docker:scout": "docker scout quickview"
+    "docker:scout": "docker scout quickview",
+    "docker:compose": "docker-compose up -d"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
