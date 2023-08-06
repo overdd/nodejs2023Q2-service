@@ -1,75 +1,77 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateAlbumDto } from 'src/album/dto/update-album.dto';
 import { Album } from 'src/album/entities/album.entity';
+import { UpdateArtistDto } from 'src/artist/dto/update-artist.dto';
 import { Artist } from 'src/artist/entities/artist.entity';
 import { Favorites } from 'src/favorites/entities/favorite.entity';
 import { Track } from 'src/track/entities/track.entity';
 import { User } from 'src/user/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class DbService {
-  private albums: { [id: string]: Album } = {};
-  private artists: { [id: string]: Artist } = {};
-  private favorites: Favorites = {
-    artists: [],
-    albums: [],
-    tracks: [],
-  };
-  private tracks: { [id: string]: Track } = {};
-  private users: { [id: string]: User } = {};
+  @InjectRepository(Album)
+  @InjectRepository(Artist)
+  @InjectRepository(Favorites)
+  @InjectRepository(Track)
+  @InjectRepository(User)
+  private albums: Repository<Album>;
+  private artists: Repository<Artist>;
+  private favorites: Repository<Favorites>;
+  private tracks: Repository<Track>;
+  private users: Repository<User>;
+
   // Album
-  addNewAlbum(newAlbum: Album) {
-    this.albums[newAlbum.id] = newAlbum;
+  async addNewAlbum(newAlbum: Album) {
+    const album = this.albums.create(newAlbum);
+    return this.albums.save(album);
   }
 
-  findAllAlbums() {
-    return Object.values(this.albums);
+  async findAllAlbums() {
+    return await this.albums.find();
   }
 
-  findOneAlbum(id: string) {
-    return this.albums[id];
+  async findOneAlbum(id: string) {
+    return await this.albums.find({ where: { id } });
   }
 
-  deleteAlbum(id: string) {
-    const index = this.getIndexInFavs('albums', id);
-    this.deleteAlbumFromFavorites(index);
-    const toBeNulledInTracks = Object.values(this.tracks).filter(
-      (object) => object['albumId'] === id,
-    );
-    toBeNulledInTracks.forEach((track) => {
-      track.albumId = null;
-    });
-    delete this.albums[id];
+  async updateAlbum(album: Album, updateAlbumDto: UpdateAlbumDto) {
+    const albumUpdated = this.albums.merge(album, updateAlbumDto);
+    return await this.albums.save(albumUpdated); 
   }
+
+  async deleteAlbum(id: string) {
+    const album =  this.albums.find({ where: { id } });
+    await this.albums.delete(id);
+    return album;
+  }
+
   // Artist
-  addNewArtist(newArtist: Artist) {
-    this.artists[newArtist.id] = newArtist;
+  async addNewArtist(newArtist: Artist) {
+    const artist = this.artists.create(newArtist);
+    return this.artists.save(newArtist);
   }
 
-  findAllArtists() {
-    return Object.values(this.artists);
+  async findAllArtists() {
+    return await this.artists.find();
   }
 
-  findOneArtist(id: string) {
-    return this.artists[id];
+  async findOneArtist(id: string) {
+    return await this.artists.findOne({ where: { id } });
   }
 
-  deleteArtist(id: string) {
-    const index = this.getIndexInFavs('artists', id);
-    this.deleteArtistFromFavorites(index);
-    const toBeNulledInAlbums = Object.values(this.albums).filter(
-      (object) => object['artistId'] === id,
-    );
-    toBeNulledInAlbums.forEach((album) => {
-      album.artistId = null;
-    });
-    const toBeNulledInTracks = Object.values(this.tracks).filter(
-      (object) => object['artistId'] === id,
-    );
-    toBeNulledInTracks.forEach((track) => {
-      track.artistId = null;
-    });
-    delete this.artists[id];
+  async updateArtist(artist: Artist, updateArtistDto: UpdateArtistDto) {
+    const artistUpdated = this.artists.merge(artist, updateArtistDto);
+    return await this.albums.save(artistUpdated); 
   }
+
+  async deleteArtist(id: string) {
+    const artist =  this.artists.find({ where: { id } });
+    await this.artists.delete(id);
+    return artist;
+  }
+
   // Track
   addNewTrack(newTrack: Track) {
     this.tracks[newTrack.id] = newTrack;
@@ -91,7 +93,7 @@ export class DbService {
 
   // User
   addNewUser(newUser: User) {
-    this.users[newUser.id] = newUser;
+    return 
   }
 
   findAllUsers() {

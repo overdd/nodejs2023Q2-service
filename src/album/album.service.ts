@@ -25,6 +25,8 @@ export class AlbumService {
       name,
       year,
       artistId,
+      tracks: [],
+      favorites: null
     };
 
     this.db.addNewAlbum(newAlbum);
@@ -43,8 +45,8 @@ export class AlbumService {
     return album;
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const album = this.db.findOneAlbum(id);
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    let album = await this.db.findOneAlbum(id);
     if (!album) {
       throw new NotFoundException('Album not found');
     }
@@ -62,9 +64,7 @@ export class AlbumService {
       );
     }
 
-    album.name = name;
-    album.year = year;
-    album.artistId = artistId;
+    album[0] = await this.db.updateAlbum(album[0], updateAlbumDto)
     return album;
   }
 

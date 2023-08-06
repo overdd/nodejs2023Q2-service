@@ -24,6 +24,8 @@ export class ArtistService {
       id: uuid(),
       name,
       grammy,
+      tracks: [],
+      favorites: null
     };
 
     this.db.addNewArtist(newArtist);
@@ -42,7 +44,7 @@ export class ArtistService {
     return artist;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
 
     if (Object.keys(updateArtistDto).length === 0) {
       throw new BadRequestException('Invaid type of DTO');
@@ -58,8 +60,7 @@ export class ArtistService {
       throw new BadRequestException('Both name and grammy are required fields');
     }
 
-    artist.name = name;
-    artist.grammy = grammy;
+    artist[0] = await this.db.updateAlbum(artist[0], updateArtistDto)
     return artist;
   }
 
