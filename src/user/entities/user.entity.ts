@@ -22,4 +22,9 @@ export class User {
 
   @Column({ type: 'timestamp', default: '1691246248143' })
   updatedAt: number;
+
+  toResponse() {
+    const { id, login } = this;
+    return { id, login };
+  }
 }

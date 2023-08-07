@@ -26,6 +26,9 @@ export class TrackService {
       artistId,
       albumId,
       duration,
+      album: null,
+      artist: null,
+      favorites: null,
     };
     this.db.addNewTrack(newTrack);
     return newTrack;
@@ -43,11 +46,11 @@ export class TrackService {
     return track;
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto) {
+  async update(id: string, updateTrackDto: UpdateTrackDto) {
     if (Object.keys(updateTrackDto).length === 0) {
       throw new BadRequestException('Invaid type of DTO');
     }
-    const track = this.db.findOneTrack(id);
+    const track = await this.db.findOneTrack(id);
     if (!track) {
       throw new NotFoundException('Track not found');
     }
@@ -60,11 +63,7 @@ export class TrackService {
       );
     }
 
-    track.name = name;
-    track.artistId = artistId;
-    track.albumId = albumId;
-    track.duration = duration;
-    return track;
+    return this.db.updateTrack(track, updateTrackDto);
   }
 
   remove(id: string) {

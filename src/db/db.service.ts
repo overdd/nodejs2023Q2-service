@@ -5,7 +5,9 @@ import { Album } from 'src/album/entities/album.entity';
 import { UpdateArtistDto } from 'src/artist/dto/update-artist.dto';
 import { Artist } from 'src/artist/entities/artist.entity';
 import { Favorites } from 'src/favorites/entities/favorite.entity';
+import { UpdateTrackDto } from 'src/track/dto/update-track.dto';
 import { Track } from 'src/track/entities/track.entity';
+import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 
@@ -73,39 +75,49 @@ export class DbService {
   }
 
   // Track
-  addNewTrack(newTrack: Track) {
-    this.tracks[newTrack.id] = newTrack;
+  async addNewTrack(newTrack: Track) {
+    const track = this.tracks.create(newTrack);
+    return await this.tracks.save(track);
   }
 
-  findAllTracks() {
-    return Object.values(this.tracks);
+  async findAllTracks() {
+    return await this.tracks.find();
   }
 
-  findOneTrack(id: string) {
-    return this.tracks[id];
+  async findOneTrack(id: string) {
+    return await this.tracks.findOne({ where: { id } });
   }
 
-  deleteTrack(id: string) {
-    const index = this.getIndexInFavs('tracks', id);
-    this.deleteTrackFromFavorites(index);
-    delete this.tracks[id];
+  async updateTrack(track: Track, updateTrackDto: UpdateTrackDto) {
+    const tracksUpdated = this.tracks.merge(track, updateTrackDto);
+    return await this.tracks.save(tracksUpdated); 
+  }
+
+  async deleteTrack(id: string) {
+    return await this.tracks.delete(id);
   }
 
   // User
-  addNewUser(newUser: User) {
-    return 
+  async addNewUser(newUser: User) {
+    return (await this.users.save(newUser)).toResponse();
   }
 
-  findAllUsers() {
-    return Object.values(this.users);
+  async findAllUsers() {
+    const users = await this.users.find();
+    return users.map((user) => user.toResponse());
   }
 
-  findOneUser(id: string) {
-    return this.users[id];
+  async findOneUser(id: string) {
+    return await this.users.findOne({ where: { id } });
   }
 
-  deleteUser(id: string) {
-    delete this.users[id];
+  async updateUser(user: User, updateUserDto: object) {
+    const userUpdated = this.users.merge(user, updateUserDto);
+    return (await this.users.save(userUpdated)).toResponse(); 
+  }
+
+  async deleteUser(id: string) {
+    return await this.users.delete(id);
   }
 
   // Favorites
