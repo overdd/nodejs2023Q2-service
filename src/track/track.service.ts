@@ -55,7 +55,7 @@ export class TrackService {
       throw new NotFoundException('Track not found');
     }
 
-    const { name, artistId, albumId, duration } = updateTrackDto;
+    const { name, duration } = updateTrackDto;
 
     if (!name || !duration) {
       throw new BadRequestException(

@@ -5,14 +5,15 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { DbService } from 'src/db/db.service';
+import { EntityType } from './entities/entity.type';
 
 @Injectable()
 export class FavoritesService {
   @Inject(DbService)
   private readonly db: DbService;
 
-  findAll() {
-    return this.db.findAllFavorites();
+  async findAll() {
+    return await this.db.findAllFavorites();
   }
 
   addTrack(trackId: string): { message: string } {
@@ -26,9 +27,9 @@ export class FavoritesService {
   }
 
   deleteTrack(trackId: string): { message: string } {
-    const index = this.db.getIndexInFavs('tracks', trackId);
-    if (index !== -1) {
-      this.db.deleteTrackFromFavorites(index);
+    const trackExists = this.db.findOneTrack(trackId);
+    if (trackExists) {
+      this.db.deleteTrackFromFavorites(trackId);
       return { message: 'Track deleted from favorites' };
     } else {
       throw new NotFoundException('Track not found in favorites');
@@ -46,9 +47,9 @@ export class FavoritesService {
   }
 
   deleteAlbum(albumId: string): { message: string } {
-    const index = this.db.getIndexInFavs('albums', albumId);
-    if (index !== -1) {
-      this.db.deleteAlbumFromFavorites(index);
+    const albumExists = this.db.findOneAlbum(albumId);
+    if (albumExists) {
+      this.db.deleteAlbumFromFavorites(albumId);
       return { message: 'Album deleted from favorites' };
     } else {
       throw new NotFoundException('Album not found in favorites');
@@ -66,9 +67,9 @@ export class FavoritesService {
   }
 
   deleteArtist(artistId: string): { message: string } {
-    const index = this.db.getIndexInFavs('artists', artistId);
-    if (index !== -1) {
-      this.db.deleteArtistFromFavorites(index);
+    const artistExists = this.db.findOneArtist(artistId);
+    if (artistExists) {
+      this.db.deleteArtistFromFavorites(artistId);
       return { message: 'Artist deleted from favorites' };
     } else {
       throw new NotFoundException('Artist not found in favorites');

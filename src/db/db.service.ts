@@ -7,9 +7,9 @@ import { Artist } from 'src/artist/entities/artist.entity';
 import { Favorites } from 'src/favorites/entities/favorite.entity';
 import { UpdateTrackDto } from 'src/track/dto/update-track.dto';
 import { Track } from 'src/track/entities/track.entity';
-import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { EntityType } from '../favorites/entities/entity.type'
 
 @Injectable()
 export class DbService {
@@ -52,7 +52,7 @@ export class DbService {
   // Artist
   async addNewArtist(newArtist: Artist) {
     const artist = this.artists.create(newArtist);
-    return this.artists.save(newArtist);
+    return this.artists.save(artist);
   }
 
   async findAllArtists() {
@@ -121,35 +121,56 @@ export class DbService {
   }
 
   // Favorites
-  findAllFavorites() {
-    const albums = this.favorites.albums.map((id) => this.findOneAlbum(id));
-    const artists = this.favorites.artists.map((id) => this.findOneArtist(id));
-    const tracks = this.favorites.tracks.map((id) => this.findOneTrack(id));
-    return { albums, artists, tracks };
+  async findAllFavorites() {
+    const allFavorites = await this.favorites.find();
+    const favoritesByType: { [key: string]: Favorites[] } = {
+      track: [],
+      album: [],
+      artist: [],
+    };
+    allFavorites.forEach((favorite) => {
+      if (favorite.type === EntityType.Track) {
+        favoritesByType.track.push(favorite);
+      } else if (favorite.type === EntityType.Album) {
+        favoritesByType.album.push(favorite);
+      } else if (favorite.type === EntityType.Artist) {
+        favoritesByType.artist.push(favorite);
+      }
+    });
+    return favoritesByType;
   }
 
-  addTrackToFavorites(id: string) {
-    this.favorites.tracks.push(id);
+  async addTrackToFavorites(id: string) {
+    const newFavorite: Favorites = new Favorites();
+    newFavorite.type = EntityType.Track;
+    newFavorite.typeId = id;
+    return await this.favorites.save(newFavorite);
   }
 
-  deleteTrackFromFavorites(index: number) {
-    this.favorites.tracks.splice(index, 1);
+  async deleteTrackFromFavorites(id: string) {
+    return await this.favorites.delete(id);
   }
 
-  addAlbumToFavorites(id: string) {
-    this.favorites.albums.push(id);
+  async addAlbumToFavorites(id: string) {
+    const newFavorite: Favorites = new Favorites();
+    newFavorite.type = EntityType.Album;
+    newFavorite.typeId = id;
+    return await this.favorites.save(newFavorite);
   }
 
-  deleteAlbumFromFavorites(index: number) {
-    this.favorites.albums.splice(index, 1);
+  async deleteAlbumFromFavorites(id: string) {
+    return await this.favorites.delete(id);
   }
 
-  addArtistToFavorites(id: string) {
-    this.favorites.artists.push(id);
+  async addArtistToFavorites(id: string) {
+    const newFavorite: Favorites = new Favorites();
+    newFavorite.type = EntityType.Artist;
+    newFavorite.typeId = id;
+    return await this.favorites.save(newFavorite);
   }
 
-  deleteArtistFromFavorites(index: number) {
-    this.favorites.artists.splice(index, 1);
+  async deleteArtistFromFavorites(id: string) {
+    return await this.favorites.delete(id);
   }
 
   // General
@@ -160,4 +181,5 @@ export class DbService {
   setValueToNull(table: string, index: number) {
     this.favorites[table][index] = null;
   }
+
 }
