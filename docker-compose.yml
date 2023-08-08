@@ -28,16 +28,6 @@ services:
       - my-network
     restart: always
     
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - '${ADMINER_PORT}:${ADMINER_PORT}'
-    environment:
-    - ADMINER_DEFAULT_SERVER=postgres-db
-    networks:
-      - my-network
-
 networks:
   my-network:
     driver: bridge

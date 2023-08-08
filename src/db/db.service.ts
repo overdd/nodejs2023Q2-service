@@ -13,16 +13,18 @@ import { EntityType } from '../favorites/entities/entity.type'
 
 @Injectable()
 export class DbService {
+  constructor(
   @InjectRepository(Album)
   @InjectRepository(Artist)
   @InjectRepository(Favorites)
   @InjectRepository(Track)
   @InjectRepository(User)
-  private albums: Repository<Album>;
-  private artists: Repository<Artist>;
-  private favorites: Repository<Favorites>;
-  private tracks: Repository<Track>;
-  private users: Repository<User>;
+  private albums: Repository<Album>,
+  private artists: Repository<Artist>,
+  private favorites: Repository<Favorites>,
+  private tracks: Repository<Track>,
+  private users: Repository<User>,
+  ) {}
 
   // Album
   async addNewAlbum(newAlbum: Album) {
