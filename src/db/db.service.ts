@@ -15,14 +15,14 @@ import { EntityType } from '../favorites/entities/entity.type'
 export class DbService {
   constructor(
   @InjectRepository(Album)
-  @InjectRepository(Artist)
-  @InjectRepository(Favorites)
-  @InjectRepository(Track)
-  @InjectRepository(User)
   private albums: Repository<Album>,
+  @InjectRepository(Artist)
   private artists: Repository<Artist>,
+  @InjectRepository(Favorites)
   private favorites: Repository<Favorites>,
+  @InjectRepository(Track)
   private tracks: Repository<Track>,
+  @InjectRepository(User)
   private users: Repository<User>,
   ) {}
 
