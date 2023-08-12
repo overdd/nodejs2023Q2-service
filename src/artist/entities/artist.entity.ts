@@ -6,7 +6,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { Track } from '../../track/entities/track.entity';
-import { Favorites } from '../../favorites/entities/favorite.entity';
+import { Favorites } from '../../favorites/entities/favorites.entity';
 
 @Entity()
 export class Artist {

@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Artist } from '../../artist/entities/artist.entity';
 import { Album } from '../../album/entities/album.entity';
-import { Favorites } from '../../favorites/entities/favorite.entity';
+import { Favorites } from '../../favorites/entities/favorites.entity';
 
 @Entity()
 export class Track {

@@ -5,7 +5,6 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { DbService } from 'src/db/db.service';
-import { EntityType } from './entities/entity.type';
 
 @Injectable()
 export class FavoritesService {

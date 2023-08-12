@@ -23,7 +23,10 @@
     "docker:build:app": "cross-env PORT=$PORT docker build --build-arg PORT=$PORT -t nestjs-app -f Dockerfile .",
     "docker:build:db": "docker build -t postgres-db -f Dockerfile.db .",
     "docker:scout": "docker scout quickview",
-    "docker:compose": "docker-compose up -d"
+    "docker:compose": "docker-compose up -d",
+    "docker:stop": "docker-compose down",
+    "migration:generate": "npx typeorm migration:generate PostRefactoring -d dist/data-source.js",
+    "migration:run": "npx typeorm migration:run -d dist/data-source.js"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",

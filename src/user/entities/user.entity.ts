@@ -11,16 +11,13 @@ export class User {
   @Column({ type: 'varchar', default: 'Password' })
   password: string;
 
-  @Column({
-    type: 'int',
-    default: 1,
-  })
+  @Column({ type: 'int', default: 1, })
   version: number;
 
-  @Column({ type: 'timestamp', default: '1691246248143' })
+  @Column({ type: 'bigint', default: '1691427529' })
   createdAt: number;
 
-  @Column({ type: 'timestamp', default: '1691246248143' })
+  @Column({ type: 'bigint', default: '1691427529' })
   updatedAt: number;
 
   toResponse() {

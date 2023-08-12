@@ -24,6 +24,8 @@ services:
       - POSTGRES_DB=mydb
       - POSTGRES_USER=myuser
       - POSTGRES_PASSWORD=mypassword
+    ports:
+      - '5432:5432'
     networks:
       - my-network
     restart: always
