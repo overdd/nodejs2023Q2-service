@@ -1,0 +1,37 @@
+version: '3'
+services:
+  nestjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: aserko/nodejs2023q2-service-nestjs-app
+    ports:
+      - '${PORT}:${PORT}'
+    depends_on:
+      - postgres-db
+    volumes:
+      - .:/usr/src/app
+    environment:
+      NODE_ENV: production
+    networks:
+      - my-network
+    restart: always
+
+  postgres-db:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    image: aserko/nodejs2023q2-service-postgres-db
+    environment:
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    networks:
+      - my-network
+    restart: always
+    
+networks:
+  my-network:
+    driver: bridge

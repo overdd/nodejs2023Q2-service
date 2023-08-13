@@ -8,7 +8,7 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { DbService } from 'src/db/db.service';
-import { v4 as uuid, validate } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class ArtistService {
@@ -24,6 +24,8 @@ export class ArtistService {
       id: uuid(),
       name,
       grammy,
+      tracks: [],
+      favorites: null
     };
 
     this.db.addNewArtist(newArtist);
@@ -35,10 +37,6 @@ export class ArtistService {
   }
 
   findOne(id: string) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     const artist = this.db.findOneArtist(id);
     if (!artist) {
       throw new NotFoundException('Artist not found');
@@ -46,11 +44,8 @@ export class ArtistService {
     return artist;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+
     if (Object.keys(updateArtistDto).length === 0) {
       throw new BadRequestException('Invaid type of DTO');
     }
@@ -65,16 +60,11 @@ export class ArtistService {
       throw new BadRequestException('Both name and grammy are required fields');
     }
 
-    artist.name = name;
-    artist.grammy = grammy;
+    artist[0] = await this.db.updateAlbum(artist[0], updateArtistDto)
     return artist;
   }
 
   remove(id: string) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     if (!this.db.findOneArtist(id)) {
       throw new NotFoundException('Artist not found');
     }

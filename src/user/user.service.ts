@@ -9,14 +9,14 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { DbService } from 'src/db/db.service';
-import { v4 as uuid, validate } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class UserService {
   @Inject(DbService)
   private readonly db: DbService;
 
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
     const { login, password } = createUserDto;
 
     if (!login || !password) {
@@ -24,18 +24,14 @@ export class UserService {
     }
     const creationDate = Date.now();
     const newUserId = uuid();
-    const newUser: User = {
-      id: newUserId,
-      login,
-      password,
-      version: 1,
-      createdAt: creationDate,
-      updatedAt: creationDate,
-    };
-    this.db.addNewUser(newUser);
-    const userForReturn = structuredClone(newUser);
-    delete userForReturn.password;
-    return userForReturn;
+    const newUser = new User()
+    newUser.id = newUserId;
+    newUser.login = login;
+    newUser.password = password;
+    newUser.version = 1;
+    newUser.createdAt = creationDate;
+    newUser.updatedAt = creationDate;
+    return await this.db.addNewUser(newUser);
   }
 
   findAll() {
@@ -43,10 +39,6 @@ export class UserService {
   }
 
   findOne(id: string) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     const user = this.db.findOneUser(id);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -54,15 +46,11 @@ export class UserService {
     return user;
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
+  async update(id: string, updateUserDto: UpdateUserDto) {
     if (Object.keys(updateUserDto).length === 0) {
       throw new BadRequestException('Invaid type of DTO');
     }
-    const user = this.db.findOneUser(id);
+    const user = await this.db.findOneUser(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -77,19 +65,15 @@ export class UserService {
     if (user.password !== oldPassword) {
       throw new ForbiddenException('Invalid old password');
     }
-    user.password = newPassword;
-    user.version++;
-    user.updatedAt = Date.now();
-    const userForReturn = structuredClone(user);
-    delete userForReturn.password;
-    return userForReturn;
+    const dto = {
+      version: user.version + 1,
+      updatedAt: Date.now(),
+      password: newPassword,
+    }
+    return await this.db.updateUser(user, dto);
   }
 
   remove(id: string) {
-    const isUUID = validate(id);
-    if (!isUUID) {
-      throw new BadRequestException('Provided id is not valid');
-    }
     if (!this.db.findOneUser(id)) {
       throw new NotFoundException('User not found');
     }
