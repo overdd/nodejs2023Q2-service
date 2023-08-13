@@ -12,25 +12,60 @@
 git clone https://github.com/overdd/nodejs2023Q2-service.git
 ```
 
+## Change branch to dev
+
+```
+git checkout develop-part-2
+```
+
 ## Installing NPM modules
 
 ```
 npm install
 ```
 
-## Running application
+## Running application in docker: 
+
+ 1) Download and install [Docker](https://docs.docker.com/engine/install/)
+
+ 2) Run in terminal next command : 
 
 ```
-npm run start // app will run on port 4000. Port number can be changed in ".env" file.
+npm run docker:compose
 ```
 
-## Running application in development mode
+## Stop app in docker:
+
+ 1) Run in terminal next command : 
 
 ```
-npm run start:dev
+npm run docker:stop
+```
+
+## Scan docker images
+
+ 1) Run in terminal next command : 
+
+```
+npm run docker:scout
 ```
 
 ## Testing
+
+Before starting test you need install npm packages
+
+open new terminal and enter:
+
+```
+npm install
+```
+
+Sometimes it's required to make a build and do a migration:
+
+```
+npm run build
+npm run migration:run
+```
 
 After application running open new terminal and enter:
 

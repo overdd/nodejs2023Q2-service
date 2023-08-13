@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: aserko/nodejs2023q2-service-nestjs-app
     ports:
       - '${PORT}:${PORT}'
     depends_on:
@@ -20,12 +21,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.db
+    image: aserko/nodejs2023q2-service-postgres-db
     environment:
       - POSTGRES_DB=mydb
       - POSTGRES_USER=myuser
       - POSTGRES_PASSWORD=mypassword
     ports:
-      - '5432:5432'
+      - ${DB_PORT}:${DB_PORT}
     networks:
       - my-network
     restart: always
